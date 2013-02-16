@@ -13,11 +13,6 @@ class Neuron
 public:
   double activation;
 
-  const double MIN_INIT_WEIGHT;
-  const double MAX_INIT_WEIGHT;
-  const double MIN_INIT_BIAS;
-  const double MAX_INIT_BIAS;
-
   Neuron();
   Neuron(const Neuron &);
   ~Neuron();

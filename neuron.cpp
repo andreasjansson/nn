@@ -2,20 +2,17 @@
 #include "neuron.h"
 #include "util.h"
 
-Neuron::Neuron() :
-  MIN_INIT_WEIGHT(0),
-  MAX_INIT_WEIGHT(0.01),
-  MIN_INIT_BIAS(0),
-  MAX_INIT_BIAS(0.01)
+#define MIN_INIT_WEIGHT 0
+#define MAX_INIT_WEIGHT 0.01
+#define MIN_INIT_BIAS 0
+#define MAX_INIT_BIAS 0.0
+
+Neuron::Neuron()
 {
 
 }
 
-Neuron::Neuron(const Neuron &neuron) :
-  MIN_INIT_WEIGHT(0),
-  MAX_INIT_WEIGHT(0.01),
-  MIN_INIT_BIAS(0),
-  MAX_INIT_BIAS(0.01)
+Neuron::Neuron(const Neuron &neuron)
 {
 
 }
