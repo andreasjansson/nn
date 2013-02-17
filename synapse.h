@@ -9,6 +9,10 @@ public:
   Neuron &from;
   Neuron &to;
   double weight;
+
+  Synapse(Neuron &from, Neuron &to) : from(from), to(to) {
+    
+  }
 };
 
 #endif

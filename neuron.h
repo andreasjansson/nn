@@ -18,6 +18,7 @@ public:
   ~Neuron();
   const double compute_activation();
   void initialise();
+  void create_synapse_from(Neuron &);
 
 private:
   list<Synapse *> incoming_synapses;
