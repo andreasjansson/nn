@@ -6,11 +6,11 @@ class Neuron;
 class Synapse
 {
 public:
-  Neuron &from;
-  Neuron &to;
+  Neuron *from;
+  Neuron *to;
   double weight;
 
-  Synapse(Neuron &from, Neuron &to) : from(from), to(to) {
+  Synapse(Neuron *from, Neuron *to) : from(from), to(to) {
     
   }
 };

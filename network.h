@@ -14,14 +14,18 @@ class Network {
 
 public:
   Network(vector<int> &);
+  ~Network();
   //Network(const Network &);
-  void train(vector<double> &);
-  double test(vector<double> &);
+  void train(const vector<double> &, const vector<double> &, int = 10);
+  double test(const vector<double> &);
 
 private:
   vector<Layer *> layers;
+  Layer *input_layer;
+  Layer *output_layer;
 
   void forward_propagation();
+  void back_propagation(const vector<double> &);
 };
 
 #endif

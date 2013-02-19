@@ -25,9 +25,10 @@ Neuron::~Neuron()
 
 void Neuron::create_synapse_from(Neuron &other)
 {
-  Synapse *synapse = new Synapse(other, *this);
+  Synapse *synapse = new Synapse(&other, this);
   synapse->weight = random_double(MIN_INIT_WEIGHT, MAX_INIT_WEIGHT);
   incoming_synapses.push_back(synapse);
+  other.outgoing_synapses.push_back(synapse);
 }
 
 double Neuron::activation_function(const double x)
@@ -40,10 +41,15 @@ const double Neuron::compute_activation()
   activation = 0;
 
   for(Synapse *synapse : incoming_synapses) {
-    activation += synapse->weight * synapse->from.activation;
+    activation += synapse->weight * synapse->from->activation;
   }
 
   activation += bias;
 
   return activation = activation_function(activation);
+}
+
+const double Neuron::activation_derivative()
+{
+  return activation * (1 - activation);
 }
