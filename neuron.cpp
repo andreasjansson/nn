@@ -1,7 +1,7 @@
 #include <math.h>
 #include "neuron.h"
 #include "synapse.h"
-#include "util.h"
+#include "nn.h"
 
 #define MIN_INIT_WEIGHT 0
 #define MAX_INIT_WEIGHT 0.01
