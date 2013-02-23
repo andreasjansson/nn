@@ -10,7 +10,7 @@
 
 Neuron::Neuron()
 {
-  bias = random_double(MIN_INIT_BIAS, MAX_INIT_BIAS);
+  bias = 0 * random_double(MIN_INIT_BIAS, MAX_INIT_BIAS);
 }
 
 Neuron::Neuron(const Neuron &neuron)
@@ -33,7 +33,7 @@ void Neuron::create_synapse_from(Neuron &other)
 
 double Neuron::activation_function(const double x)
 {
-  return 1 / (1 + exp(-x));
+  return tanh(x * 2);
 }
 
 const double Neuron::compute_activation()
@@ -46,10 +46,11 @@ const double Neuron::compute_activation()
 
   activation += bias;
 
-  return activation = activation_function(activation);
+  activation = activation_function(activation);
+  return activation;
 }
 
 const double Neuron::activation_derivative()
 {
-  return activation * (1 - activation);
+  return 1 - tanh(pow(2 * activation, 2));
 }

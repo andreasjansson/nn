@@ -9,7 +9,7 @@ using std::vector;
 using std::get;
 
 Network::Network(vector<int> &layer_sizes)
-  : layers(), learning_rate(.5)
+  : layers(), learning_rate(.9)
 {
   for(int size : layer_sizes) {
     Layer *layer = new Layer();
@@ -61,12 +61,14 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
       forward_propagation();
       back_propagation(labels);
 
+
       printf("========== Iteration %d ==========\n", i);
       print_debugging();
       printf("\n");
     }
 
-    learning_rate *= .99;
+    learning_rate *= .95;
+    //printf("learning_rate: %f\n", learning_rate);
   }
 
   print_debugging();
@@ -100,7 +102,7 @@ void Network::forward_propagation()
 
 void Network::back_propagation(const vector<double> &labels)
 {
-  for(int i = layers.size() - 1; i >= 0; -- i) {
+  for(int i = layers.size() - 1; i >= 1; -- i) {
     Layer *layer = layers[i];
     int j = 0;
     for(Neuron *neuron : *layer) {

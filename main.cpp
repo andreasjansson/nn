@@ -13,22 +13,22 @@ using std::initializer_list;
 
 int main(int argc, char **argv)
 {
-  vector<int> layer_sizes{2, 2, 2};
+  vector<int> layer_sizes{2, 2, 1};
   Network network(layer_sizes);
 
   list<TrainingExample> training_examples{
-    {{0, 0}, {0, 0}},
-      {{1, 0}, {0, 1}},
-        {{0, 1}, {0, 1}},
-          {{1, 1}, {1, 0}}
+    {{-1, -1}, {-1}},
+    {{-1, 1}, {1}},
+    {{1, -1}, {-1}},
+    {{1, 1}, {1}}
   };
 
-  network.train(training_examples, 10);
+  network.train(training_examples, 4);
 
   list<TestExample> test_examples{
-    {0, 0},
-    {0, 1},
-    {1, 0},
+    {-1, -1},
+    {-1, 1},
+    {1, -1},
     {1, 1}
   };
 
