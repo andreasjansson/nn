@@ -45,7 +45,7 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
   Layer *input_layer = layers[0];
 
   for(int i = 0; i < iterations; i ++) {
-    for(TrainingExample training_example : training_examples) {
+    for(const TrainingExample &training_example : training_examples) {
 
       vector<double> example = training_example.first;
       vector<double> labels = training_example.second;
@@ -61,10 +61,11 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
       forward_propagation();
       back_propagation(labels);
 
-
+      /*
       printf("========== Iteration %d ==========\n", i);
       print_debugging();
       printf("\n");
+      */
     }
 
     learning_rate *= .95;
@@ -108,14 +109,10 @@ void Network::back_propagation(const vector<double> &labels)
     for(Neuron *neuron : *layer) {
       double label = labels[j ++];
       if(layer == output_layer) {
-        neuron->delta = (label - neuron->activation) * neuron->activation_derivative();
+        neuron->delta = neuron->get_delta_for_label(label);
       }
       else {
-        neuron->delta = 0;
-        for(Synapse *out_synapse : neuron->outgoing_synapses) {
-          neuron->delta += out_synapse->weight * out_synapse->to->delta;
-        }
-        neuron->delta *= neuron->activation_derivative();
+        neuron->delta = neuron->get_delta();
       }
     }
   }

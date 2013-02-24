@@ -54,3 +54,18 @@ const double Neuron::activation_derivative()
 {
   return 1 - tanh(pow(2 * activation, 2));
 }
+
+const double Neuron::get_delta_for_label(const double label)
+{
+  return (label - activation) * activation_derivative();
+}
+
+const double Neuron::get_delta()
+{
+  double delta = 0;
+  for(Synapse *out_synapse : outgoing_synapses) {
+    delta += out_synapse->weight * out_synapse->to->delta;
+  }
+  delta *= activation_derivative();
+  return delta;
+}

@@ -24,6 +24,8 @@ public:
   const double activation_derivative();
   void initialise();
   void create_synapse_from(Neuron &);
+  const double get_delta_for_label(const double);
+  const double get_delta();
 
 private:
   double activation_function(const double);
