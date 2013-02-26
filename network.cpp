@@ -49,7 +49,6 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
 
       vector<double> example = training_example.first;
       vector<double> labels = training_example.second;
-
       assert(input_layer->size() == example.size());
       assert(output_layer->size() == labels.size());
 
@@ -62,17 +61,18 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
       back_propagation(labels);
 
       /*
-      printf("========== Iteration %d ==========\n", i);
       print_debugging();
       printf("\n");
       */
     }
 
-    learning_rate *= .95;
-    //printf("learning_rate: %f\n", learning_rate);
+    printf("%5d ", i);
+    
+    learning_rate *= .995;
+    printf("learning_rate: %f\n", learning_rate);
   }
 
-  print_debugging();
+  //print_debugging();
 }
 
 list<double> *Network::test(const vector<double> &example)

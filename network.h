@@ -14,21 +14,22 @@ typedef list<Neuron *> Layer;
 class Network {
 
 public:
+  vector<Layer *> layers;
+  Layer *input_layer;
+  Layer *output_layer;
+
   Network(vector<int> &);
   ~Network();
   //Network(const Network &);
   void train(const list<TrainingExample> &, int = 10);
   list<double> *test(const vector<double> &);
+  void print_debugging();
 
 private:
-  vector<Layer *> layers;
   double learning_rate;
-  Layer *input_layer;
-  Layer *output_layer;
 
   void forward_propagation();
   void back_propagation(const vector<double> &);
-  void print_debugging();
 };
 
 #endif

@@ -52,7 +52,7 @@ const double Neuron::compute_activation()
 
 const double Neuron::activation_derivative()
 {
-  return 1 - tanh(pow(2 * activation, 2));
+  return 1 - tanh(4 * activation * activation);
 }
 
 const double Neuron::get_delta_for_label(const double label)
