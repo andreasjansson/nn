@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = `Magick++-config --cppflags --cxxflags --libs` -std=c++0x -O9
-LDFLAGS = `Magick++-config --ldflags`
+CXXFLAGS = `Magick++-config --cppflags --cxxflags --libs` -std=c++0x -O9 -fopenmp
+LDFLAGS = `Magick++-config --ldflags` -fopenmp
 OBJECTS = nn.o network.o neuron.o
 
 nn: $(OBJECTS)

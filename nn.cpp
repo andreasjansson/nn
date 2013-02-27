@@ -59,7 +59,8 @@ void load_image2(arma::mat &image)
   }
 }
 
-void save_image(arma::mat &image, std::string filename) {
+void save_image(arma::mat &image, std::string filename)
+{
   Magick::Image im(Magick::Geometry(image.n_cols, image.n_rows), Magick::Color("black"));
   im.modifyImage();
   im.type(Magick::GrayscaleType);
@@ -76,7 +77,27 @@ void save_image(arma::mat &image, std::string filename) {
   im.write(filename.c_str());
 }
 
-void save_image(list<Neuron *> *neurons, int single_width, std::string filename) {
+void save_image_activations(Layer *neurons, std::string filename)
+{
+  int side = sqrt(neurons->size());
+
+  Magick::Image im(Magick::Geometry(side, side), Magick::Color("black"));
+  Magick::PixelPacket *pixels = im.getPixels(0, 0, side, side);
+  int i = 0;
+  for(int y = 0; y < side; y ++) {
+    for(int x = 0; x < side; x ++) {
+      pixels[x + y * side] = Magick::ColorGray(((*neurons)[i ++]->activation + 1) / 2.0);
+    }
+  }
+
+  im.syncPixels();
+  im.filterType(Magick::PointFilter);
+  im.resize("800x800");
+  im.write(filename.c_str());
+}
+
+void save_image(Layer *neurons, int single_width, std::string filename)
+{
   int row = 0, column = 0, x = 0, y = 0;
   int border = 2;
   int rows = sqrt(neurons->size());
@@ -125,7 +146,7 @@ void save_image(list<Neuron *> *neurons, int single_width, std::string filename)
 void load_image(arma::mat &image)
 {
   Magick::Image im;
-  im.read("image.jpg");
+  im.read("image_crop2.jpg");
   Magick::Color colour;
   Magick::PixelPacket *pixels = im.getPixels(0, 0, image.n_cols, image.n_rows);
   for(int y = 0; y < image.n_rows; y ++) {
@@ -141,7 +162,7 @@ void load_image(arma::mat &image)
 int main(int argc, char **argv)
 {
   int side = 8;
-  arma::mat image(600, 600);
+  arma::mat image(512, 512);
   load_image(image);
   save_image(image, "original.jpg");
 
@@ -152,12 +173,10 @@ int main(int argc, char **argv)
   vector<int> layer_sizes{side * side, 25, side * side};
   Network network(layer_sizes);
 
-  //save_image(network.layers[1], side, std::string("layer1_first.png"));
-
   list<TrainingExample> training_examples;
 
   arma::mat training_image;
-  for(int i = 0; i < 10; i ++) {
+  for(int i = 0; i < 1000; i ++) {
 
     char istr[10];
     sprintf(istr, "%d", i);
@@ -179,11 +198,14 @@ int main(int argc, char **argv)
     training_examples.push_back({data, data});
   }
 
-  network.train(training_examples, 100);
+  network.train(training_examples, 200);
 
   //  network.print_debugging();
 
   save_image(network.layers[1], side, "out.png");
+  save_image_activations(network.layers[0], "activations_0.jpg");
+  save_image_activations(network.layers[1], "activations_1.jpg");
+  save_image_activations(network.layers[2], "activations_2.jpg");
 
   /*
   list<TestExample> test_examples{

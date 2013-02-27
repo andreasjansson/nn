@@ -2,6 +2,7 @@
 #define NEURON_H
 
 #include <list>
+#include <math.h>
 #include "synapse.h"
 
 using std::list;
@@ -21,11 +22,11 @@ public:
   Neuron(const Neuron &);
   ~Neuron();
   const double compute_activation();
-  const double activation_derivative();
   void initialise();
   void create_synapse_from(Neuron &);
+  const double activation_derivative();
   const double get_delta_for_label(const double);
-  const double get_delta();
+  const double get_delta(double avg_activation);
 
 private:
   double activation_function(const double);

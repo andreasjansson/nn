@@ -9,7 +9,7 @@ using std::vector;
 using std::get;
 
 Network::Network(vector<int> &layer_sizes)
-  : layers(), learning_rate(.9)
+  : layers(), learning_rate(1), weight_decay(0.0001)
 {
   for(int size : layer_sizes) {
     Layer *layer = new Layer();
@@ -68,7 +68,7 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
 
     printf("%5d ", i);
     
-    learning_rate *= .995;
+    learning_rate *= .95;
     printf("learning_rate: %f\n", learning_rate);
   }
 
@@ -105,6 +105,7 @@ void Network::back_propagation(const vector<double> &labels)
 {
   for(int i = layers.size() - 1; i >= 1; -- i) {
     Layer *layer = layers[i];
+
     int j = 0;
     for(Neuron *neuron : *layer) {
       double label = labels[j ++];
@@ -112,17 +113,30 @@ void Network::back_propagation(const vector<double> &labels)
         neuron->delta = neuron->get_delta_for_label(label);
       }
       else {
-        neuron->delta = neuron->get_delta();
+
+        double avg_activation = 0;
+        if(layer != output_layer) {
+          for(double label : labels) {
+            avg_activation += neuron->activation * label;
+          }
+          avg_activation / layer->size();
+        }
+        
+        neuron->delta = neuron->get_delta(avg_activation);
       }
     }
   }
+
+  //printf("------------------\n");
 
   for(int i = 0; i < layers.size() - 1; ++ i) {
     Layer *layer = layers[i];
     for(Neuron *neuron : *layer) {
       for(Synapse *synapse : neuron->outgoing_synapses) {
-        synapse->weight += learning_rate * neuron->activation * synapse->to->delta;
+        synapse->weight += learning_rate * neuron->activation * synapse->to->delta -
+          weight_decay * synapse->weight;
       }
+      neuron->bias += learning_rate * neuron->delta;
     }
   }
 }

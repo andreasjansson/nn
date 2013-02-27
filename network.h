@@ -9,7 +9,7 @@
 using std::list;
 using std::vector;
 
-typedef list<Neuron *> Layer;
+typedef vector<Neuron *> Layer;
 
 class Network {
 
@@ -27,6 +27,7 @@ public:
 
 private:
   double learning_rate;
+  double weight_decay;
 
   void forward_propagation();
   void back_propagation(const vector<double> &);

@@ -3,14 +3,9 @@
 #include "synapse.h"
 #include "nn.h"
 
-#define MIN_INIT_WEIGHT 0
-#define MAX_INIT_WEIGHT 0.01
-#define MIN_INIT_BIAS 0
-#define MAX_INIT_BIAS 0.0
-
 Neuron::Neuron()
 {
-  bias = 0 * random_double(MIN_INIT_BIAS, MAX_INIT_BIAS);
+  bias = 0;
 }
 
 Neuron::Neuron(const Neuron &neuron)
@@ -26,14 +21,9 @@ Neuron::~Neuron()
 void Neuron::create_synapse_from(Neuron &other)
 {
   Synapse *synapse = new Synapse(&other, this);
-  synapse->weight = random_double(MIN_INIT_WEIGHT, MAX_INIT_WEIGHT);
+  synapse->weight = random_double(-.24, .24);
   incoming_synapses.push_back(synapse);
   other.outgoing_synapses.push_back(synapse);
-}
-
-double Neuron::activation_function(const double x)
-{
-  return tanh(x * 2);
 }
 
 const double Neuron::compute_activation()
@@ -50,9 +40,14 @@ const double Neuron::compute_activation()
   return activation;
 }
 
+double Neuron::activation_function(const double x)
+{
+  return tanh(x);
+}
+
 const double Neuron::activation_derivative()
 {
-  return 1 - tanh(4 * activation * activation);
+  return 1 - tanh(activation * activation);
 }
 
 const double Neuron::get_delta_for_label(const double label)
@@ -60,12 +55,20 @@ const double Neuron::get_delta_for_label(const double label)
   return (label - activation) * activation_derivative();
 }
 
-const double Neuron::get_delta()
+const double Neuron::get_delta(double avg_activation)
 {
+  static double sparsity_penalty_weight = 3;
+  static double sparsity = .0001;
+
   double delta = 0;
   for(Synapse *out_synapse : outgoing_synapses) {
     delta += out_synapse->weight * out_synapse->to->delta;
   }
+
+  delta += sparsity_penalty_weight *
+    (-(sparsity / avg_activation) + ((1 - sparsity) / (1 - avg_activation)));
+
   delta *= activation_derivative();
   return delta;
 }
+
