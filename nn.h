@@ -20,4 +20,5 @@ inline double random_double(double min, double max)
   return random * range + min;
 }
 
+
 #endif

@@ -42,12 +42,12 @@ const double Neuron::compute_activation()
 
 double Neuron::activation_function(const double x)
 {
-  return tanh(x);
+  return 1 / (1 + exp(-x));
 }
 
 const double Neuron::activation_derivative()
 {
-  return 1 - tanh(activation * activation);
+  return activation * (1 - activation);
 }
 
 const double Neuron::get_delta_for_label(const double label)
@@ -58,12 +58,13 @@ const double Neuron::get_delta_for_label(const double label)
 const double Neuron::get_delta(double avg_activation)
 {
   static double sparsity_penalty_weight = 3;
-  static double sparsity = .0001;
-
+  static double sparsity = .05;
   double delta = 0;
   for(Synapse *out_synapse : outgoing_synapses) {
     delta += out_synapse->weight * out_synapse->to->delta;
   }
+
+  printf("%f\n", avg_activation);
 
   delta += sparsity_penalty_weight *
     (-(sparsity / avg_activation) + ((1 - sparsity) / (1 - avg_activation)));

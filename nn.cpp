@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <sys/time.h>
 #include "network.h"
-#include "nn.h"
+#include <thread>
 
 using std::list;
 using std::vector;
@@ -45,17 +45,6 @@ void preprocess_training_examples(list<TrainingExample> &examples)
     for(i = 0; i < example.first.size(); i ++) {
       example.first[i] = (example.first[i] - mins[i]) / (maxes[i] - mins[i]);
     }
-  }
-}
-
-void load_image2(arma::mat &image)
-{
-  image.fill(-1.);
-  for(int i = 0; i < image.n_cols; i ++) {
-    image(i, i) = 1;
-  }
-  for(int i = 0; i < image.n_cols; i ++) {
-    image(image.n_cols - i - 1, i) = 1;
   }
 }
 
@@ -115,13 +104,19 @@ void save_image(Layer *neurons, int single_width, std::string filename)
   for(Neuron *neuron : *neurons) {
     x = 0;
     y = 0;
+    double max_weight = -INFINITY;
+    double min_weight = INFINITY;
+    for(Synapse *synapse : neuron->outgoing_synapses) {
+      if(synapse->weight < min_weight)
+        min_weight = synapse->weight;
+      if(synapse->weight > max_weight)
+        max_weight = synapse->weight;
+    }
     for(Synapse *synapse : neuron->outgoing_synapses) {
       int im_x = x + column * (border + single_width);
       int im_y = y + row * (border + single_width);
 
-      //printf("%d, %d\n", im_x, im_y);
-
-      pixels[im_x + im_y * width] = Magick::ColorGray(synapse->weight);
+      pixels[im_x + im_y * width] = Magick::ColorGray((synapse->weight - min_weight) / (max_weight - min_weight));
 
       x ++;
       if(x == single_width) {
@@ -146,7 +141,7 @@ void save_image(Layer *neurons, int single_width, std::string filename)
 void load_image(arma::mat &image)
 {
   Magick::Image im;
-  im.read("image_crop2.jpg");
+  im.read("image.jpg");
   Magick::Color colour;
   Magick::PixelPacket *pixels = im.getPixels(0, 0, image.n_cols, image.n_rows);
   for(int y = 0; y < image.n_rows; y ++) {
@@ -159,6 +154,35 @@ void load_image(arma::mat &image)
   save_image(image, "loaded.jpg");
 }
 
+volatile double b;
+
+extern "C" {
+  double get_b()
+  {
+    return b;
+  }
+
+  void loop()
+  {
+    while(1) {
+      for(int i = 0; i < 10; i ++) {
+        b += .00000001;
+        if(b > 1) {
+          b -= 1;
+        }
+
+        if(b > .5 && b < .501) {
+          //printf("%p: %f\n", &b, b);
+          b = .6;
+        }
+      }
+    
+      //    std::this_thread::sleep(
+    }
+  }
+}
+
+/*
 int main(int argc, char **argv)
 {
   int side = 8;
@@ -207,7 +231,7 @@ int main(int argc, char **argv)
   save_image_activations(network.layers[1], "activations_1.jpg");
   save_image_activations(network.layers[2], "activations_2.jpg");
 
-  /*
+//  /*
   list<TestExample> test_examples{
     {0.08, 0.58, 0.07, 0.08},
     {0.56, 0.21, 0.68, 0.75}
@@ -228,5 +252,6 @@ int main(int argc, char **argv)
 
     free(result);
   }
-  */
+  * /
 }
+*/
