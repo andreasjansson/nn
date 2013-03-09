@@ -154,31 +154,18 @@ void load_image(arma::mat &image)
   save_image(image, "loaded.jpg");
 }
 
-volatile double b;
+volatile Network *network;
 
 extern "C" {
-  double get_b()
-  {
-    return b;
-  }
-
   void loop()
   {
-    while(1) {
-      for(int i = 0; i < 10; i ++) {
-        b += .00000001;
-        if(b > 1) {
-          b -= 1;
-        }
+    int side = 8;
+    vector<int> layer_sizes{side * side, 25, side * side};
+    network = new Network(layer_sizes);
+  }
 
-        if(b > .5 && b < .501) {
-          //printf("%p: %f\n", &b, b);
-          b = .6;
-        }
-      }
-    
-      //    std::this_thread::sleep(
-    }
+  vector<Layer *> &get_layers() {
+    return network->layers;
   }
 }
 
