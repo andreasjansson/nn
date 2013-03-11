@@ -154,18 +154,23 @@ void load_image(arma::mat &image)
   save_image(image, "loaded.jpg");
 }
 
-volatile Network *network;
+Network *network;
 
 extern "C" {
-  void loop()
+  void setup()
   {
     int side = 8;
-    vector<int> layer_sizes{side * side, 25, side * side};
+    vector<int> layer_sizes{2000, 1000, 500, 300, 2000};
     network = new Network(layer_sizes);
   }
 
-  vector<Layer *> &get_layers() {
-    return network->layers;
+  void loop()
+  {
+    
+  }
+
+  Network *get_network() {
+    return network;
   }
 }
 
