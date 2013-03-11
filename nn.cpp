@@ -189,12 +189,13 @@ extern "C" {
       vector<double> data = arma::conv_to<vector<double> >::from(col);
       training_examples.push_back({data, data});
     }
-
   }
 
   void loop()
   {
     network->train(training_examples, 200);
+
+    save_image(network->layers[1], 2, "out.png");
   }
 
   Network *get_network() {
