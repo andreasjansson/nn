@@ -141,7 +141,7 @@ void save_image(Layer *neurons, int single_width, std::string filename)
 void load_image(arma::mat &image)
 {
   Magick::Image im;
-  im.read("image.jpg");
+  im.read("/home/andreas/phd/learn_nn/image.jpg");
   Magick::Color colour;
   Magick::PixelPacket *pixels = im.getPixels(0, 0, image.n_cols, image.n_rows);
   for(int y = 0; y < image.n_rows; y ++) {
@@ -155,18 +155,46 @@ void load_image(arma::mat &image)
 }
 
 Network *network;
+list<TrainingExample> training_examples;
 
 extern "C" {
   void setup()
   {
-    int side = 8;
-    vector<int> layer_sizes{2000, 1000, 500, 300, 2000};
+    int side = 2;
+    vector<int> layer_sizes{side * side, 3, side * side};
     network = new Network(layer_sizes);
+
+    arma::mat image(512, 512);
+    load_image(image);
+
+    arma::mat training_image;
+    for(int i = 0; i < 5000; i ++) {
+
+      char istr[10];
+      sprintf(istr, "%d", i);
+
+      if(image.n_cols <= side && image.n_rows <= side) {
+        training_image = image;
+      }
+      else {
+        int left = random() % (image.n_cols - side);
+        int top = random() % (image.n_rows - side);
+        training_image = image.submat(top, left, top + side - 1, left + side - 1);
+
+        //save_image(training_image, std::string("train_") + istr + ".jpg");
+      }
+      training_image.reshape(side * side, 1);
+
+      arma::colvec col = training_image.col(0);
+      vector<double> data = arma::conv_to<vector<double> >::from(col);
+      training_examples.push_back({data, data});
+    }
+
   }
 
   void loop()
   {
-    
+    network->train(training_examples, 200);
   }
 
   Network *get_network() {

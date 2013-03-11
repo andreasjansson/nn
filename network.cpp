@@ -3,6 +3,7 @@
 #include "network.h"
 #include "neuron.h"
 #include "nn.h"
+#include <signal.h>
 
 using std::list;
 using std::vector;
@@ -66,7 +67,7 @@ void Network::train(const list<TrainingExample> &training_examples, int iteratio
       */
     }
 
-    printf("%5d ", i);
+    //printf("%5d ", i);
     
     learning_rate *= .99;
     printf("learning_rate: %f\n", learning_rate);
@@ -121,7 +122,7 @@ void Network::back_propagation(const vector<double> &labels)
           }
           avg_activation /= labels.size();
         }
-        
+
         neuron->delta = neuron->get_delta(avg_activation);
       }
     }

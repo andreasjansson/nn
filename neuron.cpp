@@ -64,10 +64,12 @@ const double Neuron::get_delta(double avg_activation)
     delta += out_synapse->weight * out_synapse->to->delta;
   }
 
-  printf("%f\n", avg_activation);
+  //printf("%f\n", avg_activation);
 
+  /*
   delta += sparsity_penalty_weight *
     (-(sparsity / avg_activation) + ((1 - sparsity) / (1 - avg_activation)));
+  */
 
   delta *= activation_derivative();
   return delta;
